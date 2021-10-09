@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sprout.Exam.Business.Interfaces
 {
-    interface ISalaryCalculator
+    public interface ISalaryCalculator
     {
         double ComputeSalary();
     }
