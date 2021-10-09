@@ -18,8 +18,8 @@ namespace Sprout.Exam.Business.Implementations
 
         public double ComputeSalary()
         {
-            var payout = Math.Round(RatePerDay * DaysReported, 2);
-            return payout;
+            var netIncome = Math.Round(RatePerDay * DaysReported, 2);
+            return netIncome;
         }
     }
 }
