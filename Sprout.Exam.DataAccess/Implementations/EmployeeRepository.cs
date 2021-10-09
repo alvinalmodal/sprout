@@ -6,78 +6,94 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using Dapper;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sprout.Exam.DataAccess.Implementations
 {
-    public class EmployeeRepository : IDBRepository<EmployeeModel>
+    public sealed class EmployeeRepository : IDBRepository<EmployeeModel>, IDisposable
     {
-        public string ConnectionName { get; set; } = "DefaultConnection";
         private IConfiguration Config;
-        private string Connection;
+        private readonly SqlConnection Connection;
 
         public EmployeeRepository(IConfiguration config)
         {
             Config = config;
-            Connection = config.GetConnectionString(ConnectionName);
+            Connection = new SqlConnection(Config.GetConnectionString("DefaultConnection"));
+            Connection.Open();
         }
 
-        public List<EmployeeModel> All()
+        public async Task<List<EmployeeModel>> All()
         {
-            var employees = new List<EmployeeModel>();
+            var employees = await Connection.QueryAsync<EmployeeModel>(
+                "usp_Employee_List",
+                new { },
+                commandType: System.Data.CommandType.StoredProcedure
+            );
 
-            using (var connection = new SqlConnection(Connection))
-            {
-                employees = connection.Query<EmployeeModel>(
-                    "usp_Employee_List", 
-                    new { }, 
-                    commandType : System.Data.CommandType.StoredProcedure
-                ).ToList();
-            }
-
-            return employees;
+            return employees.ToList();
         }
 
-        public void Remove(EmployeeModel employee)
+        public async Task<EmployeeModel> Remove(EmployeeModel employee)
         {
-            using (var connection = new SqlConnection(Connection))
-            {
-                connection.Execute(
-                    "usp_Employee_Remove", 
-                    new { Id = employee.Id }, 
-                    commandType: System.Data.CommandType.StoredProcedure
-                );
-            }
+            return await Connection.QueryFirstOrDefaultAsync<EmployeeModel>(
+                "usp_Employee_Remove",
+                new { Id = employee.Id },
+                commandType: System.Data.CommandType.StoredProcedure
+            );
         }
 
-        public void Save(EmployeeModel employee)
+        public async Task<EmployeeModel> Save(EmployeeModel employee)
         {
-            using (var connection = new SqlConnection(Connection))
-            {
-                connection.Execute("usp_Employee_Save", employee, commandType: System.Data.CommandType.StoredProcedure);
-            }
+            return await Connection.QueryFirstOrDefaultAsync<EmployeeModel>(
+                "usp_Employee_Save",
+                new { 
+                        FullName = employee.FullName, 
+                        BirthDate = employee.BirthDate, 
+                        TIN = employee.TIN, 
+                        EmployeeTypeId = employee.EmployeeTypeId 
+                },
+                commandType: System.Data.CommandType.StoredProcedure
+            );
         }
 
-        public List<EmployeeModel> Search(EmployeeModel employee)
+        public async Task<List<EmployeeModel>> Search(EmployeeModel employee)
         {
-            var employees = new List<EmployeeModel>();
 
-            using (var connection = new SqlConnection(Connection))
-            {
-               employees = connection.Query<EmployeeModel>(
-                   "usp_Employee_Search", 
-                   new { FullName = employee.FullName}, 
+            var employees = await Connection.QueryAsync<EmployeeModel>(
+                   "usp_Employee_Search",
+                   new { FullName = employee.FullName },
                    commandType: System.Data.CommandType.StoredProcedure
-               ).ToList();
-            }
+            );
 
-            return employees;
+            return employees.ToList();
         }
 
-        public void Update(EmployeeModel employee)
+        public async Task<EmployeeModel> SearchById(int id)
         {
-            using (var connection = new SqlConnection(Connection))
+            return await Connection.QueryFirstOrDefaultAsync<EmployeeModel>(
+                   "usp_Employee_SearchById",
+                   new { Id = id },
+                   commandType: System.Data.CommandType.StoredProcedure
+            );
+        }
+
+        public async Task<EmployeeModel> Update(EmployeeModel employee)
+        {
+            return await Connection.QueryFirstOrDefaultAsync<EmployeeModel>(
+                "usp_Employee_Update", 
+                employee, 
+                commandType: 
+                System.Data.CommandType.StoredProcedure
+            );
+        }
+
+        public void Dispose()
+        {
+            if(Connection != null)
             {
-                connection.Execute("usp_Employee_Update", employee, commandType: System.Data.CommandType.StoredProcedure);
+                if (Connection.State == System.Data.ConnectionState.Open)
+                    Connection.Close();
+                Connection.Dispose();
             }
         }
     }
