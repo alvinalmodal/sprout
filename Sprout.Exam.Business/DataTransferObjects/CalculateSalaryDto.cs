@@ -8,6 +8,6 @@ namespace Sprout.Exam.Business.DataTransferObjects
     {
         public int Id { get; set; }
         public double AbsentDays { get; set; }
-        public string WorkedDays { get; set; }
+        public double WorkedDays { get; set; }
     }
 }
