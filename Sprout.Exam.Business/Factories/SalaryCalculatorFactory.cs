@@ -26,7 +26,7 @@ namespace Sprout.Exam.Business.Factories
                     break;
                 case EmployeeType.Contractual:
                     calculator = new ContractualEmployeeSalaryCalculator(
-                        payrollDetails.RatePerDay, 
+                        payrollDetails.RatePerDay,
                         payrollDetails.DaysReported
                      );
                     break;
