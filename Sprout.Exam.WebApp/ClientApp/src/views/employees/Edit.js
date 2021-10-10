@@ -21,7 +21,17 @@ export class EmployeeEdit extends Component {
       if (window.confirm("Are you sure you want to save?")) {
         this.saveEmployee();
       } 
-  }
+    }
+
+    convertDateTime(date) {
+        if (date instanceof Date) {
+            const year = date.getFullYear()
+            const month = `${date.getMonth() + 1}`.padStart(2, "0")
+            const day = `${date.getDate()}`.padStart(2, "0")
+            return `${year}-${month}-${day}`;
+        }
+        return date;
+    }
 
   render() {
 
@@ -35,8 +45,8 @@ export class EmployeeEdit extends Component {
   <input type='text' className='form-control' id='inputFullName4' onChange={this.handleChange.bind(this)} name="fullName" value={this.state.fullName} placeholder='Full Name' />
 </div>
 <div className='form-group col-md-6'>
-  <label htmlFor='inputBirthdate4'>Birthdate: *</label>
-  <input type='date' className='form-control' id='inputBirthdate4' onChange={this.handleChange.bind(this)} name="birthdate" value={this.state.birthdate} placeholder='Birthdate' />
+     <label htmlFor='birthdate'>Birthdate: *</label>
+     <input type='date' className='form-control' id='birthdate' onChange={this.handleChange.bind(this)} name="birthdate" value={this.convertDateTime(this.state.birthdate)} placeholder='Birthdate' />
 </div>
 </div>
 <div className="form-row">
@@ -94,6 +104,7 @@ export class EmployeeEdit extends Component {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-    this.setState({ id: data.id,fullName: data.fullName,birthdate: data.birthdate,tin: data.tin,typeId: data.typeId, loading: false,loadingSave: false });
+      this.setState({ id: data.id, fullName: data.fullName, birthdate: new Date(data.birthdate), tin: data.tin, typeId: data.typeId, loading: false, loadingSave: false });
+      console.log(this.convertDateTime(this.state.birthdate))
   }
 }
