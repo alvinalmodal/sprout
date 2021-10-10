@@ -18,11 +18,9 @@ namespace Sprout.Exam.Tests
 
         public EmployeeRepositoryTest()
         {
-            var builder = new ConfigurationBuilder()
-                            .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var configBuilder = new ConfigBuilder();
 
-            IConfiguration config = builder.Build();
+            IConfiguration config = configBuilder.Build();
             Db = new EmployeeRepository(config);
             DbHelper = new TestDBHelper(config);
         }
@@ -64,12 +62,14 @@ namespace Sprout.Exam.Tests
             return Db.Save(employee).Result;
         }
 
-        [Fact]
-        public void Search_ShouldReturnListOfEmployesBasedOnFullName()
+        [Theory]
+        [MemberData(nameof(GetSaveTestData))]
+        public void Search_ShouldReturnListOfEmployesBasedOnFullName(EmployeeModel employee)
         {
-            var employee = CreateTestEmployee();
-            var employeeInDB = Db.Search(new EmployeeModel { FullName = employee.FullName }).Result.FirstOrDefault();
-            Assert.Equal(employee, employeeInDB);
+            DbHelper.TruncateTable("Employee");
+            var employeeInDB = Db.Save(employee).Result;
+            var searchedEmployee = Db.Search(new EmployeeModel { FullName = employee.FullName }).Result.FirstOrDefault();
+            Assert.Equal(employeeInDB, searchedEmployee);
         }
 
         [Theory]
