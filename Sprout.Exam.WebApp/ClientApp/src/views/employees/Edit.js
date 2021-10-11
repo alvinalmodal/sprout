@@ -104,7 +104,6 @@ export class EmployeeEdit extends Component {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
-      this.setState({ id: data.id, fullName: data.fullName, birthdate: new Date(data.birthdate), tin: data.tin, typeId: data.typeId, loading: false, loadingSave: false });
-      console.log(this.convertDateTime(this.state.birthdate))
+    this.setState({ id: data.id, fullName: data.fullName, birthdate: new Date(data.birthdate), tin: data.tin, typeId: data.typeId, loading: false, loadingSave: false });
   }
 }

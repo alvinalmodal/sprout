@@ -15,6 +15,14 @@ using Sprout.Exam.WebApp.Data;
 using Sprout.Exam.WebApp.Models;
 using Sprout.Exam.Business.Services;
 using System;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using Sprout.Exam.Business.DataTransferObjects;
+using Sprout.Exam.Business.Validators;
+using Sprout.Exam.DataAccess.Interfaces;
+using Sprout.Exam.DataAccess.Models;
+using Sprout.Exam.DataAccess.Implementations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Sprout.Exam.WebApp
 {
@@ -46,6 +54,21 @@ namespace Sprout.Exam.WebApp
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();
+
+            // validators
+            services.AddTransient<IValidator<CreateEmployeeDto>, CreateEmployeeDtoValidator>();
+            services.AddTransient<IValidator<EditEmployeeDto>, EditEmployeeDtoValidator>(x => {
+                return new EditEmployeeDtoValidator(Configuration);
+            });
+            services.AddTransient<IValidator<CalculateSalaryDto>, CalculateSalaryDtoValidator>(x => {
+                return new CalculateSalaryDtoValidator(Configuration);
+            });
+
+            // repositories
+            services.AddTransient<IDBRepository<EmployeeModel>, EmployeeRepository>( x => {
+                return new EmployeeRepository(Configuration);
+            });
+
             services.AddRazorPages();
 
             // In production, the React files will be served from this directory

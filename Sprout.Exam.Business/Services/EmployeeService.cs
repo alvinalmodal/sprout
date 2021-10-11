@@ -9,15 +9,17 @@ using System.Threading.Tasks;
 using Sprout.Exam.Business.Interfaces;
 using Sprout.Exam.Business.Factories;
 using Sprout.Exam.Business.Models;
+using Sprout.Exam.DataAccess.Interfaces;
 
 namespace Sprout.Exam.Business.Services
 {
     public class EmployeeService : IEmployeeService, IDisposable
     {
-        public EmployeeRepository EmployeeDb { get; set; }
-        public EmployeeService(IConfiguration config)
+        private IDBRepository<EmployeeModel> EmployeeDb;
+
+        public EmployeeService(IDBRepository<EmployeeModel> employeeDb)
         {
-            EmployeeDb = new EmployeeRepository(config);
+            EmployeeDb = employeeDb;
         }
 
         public async Task<List<EmployeeModel>> All()
