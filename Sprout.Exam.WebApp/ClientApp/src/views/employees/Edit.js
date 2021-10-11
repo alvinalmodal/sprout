@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import authService from '../../components/api-authorization/AuthorizeService';
+import { displayFieldError, displayUnhandledErrors } from '../../common/DisplayError';
 
 export class EmployeeEdit extends Component {
   static displayName = EmployeeEdit.name;
 
   constructor(props) {
     super(props);
-    this.state = { id: 0,fullName: '',birthdate: '',tin: '',typeId: 1, loading: true,loadingSave:false };
+    this.state = { id: 0,fullName: '',birthdate: '',tin: '',typeId: 1, loading: true,loadingSave:false, errors:[] };
   }
 
   componentDidMount() {
@@ -43,29 +44,34 @@ export class EmployeeEdit extends Component {
 <div className='form-row'>
 <div className='form-group col-md-6'>
   <label htmlFor='inputFullName4'>Full Name: *</label>
-  <input type='text' className='form-control' id='inputFullName4' onChange={this.handleChange.bind(this)} name="fullName" value={this.state.fullName} placeholder='Full Name' />
+    <input type='text' className='form-control' id='inputFullName4' onChange={this.handleChange.bind(this)} name="fullName" value={this.state.fullName} placeholder='Full Name' />
+    {displayFieldError(this.state.errors, "fullName")}
 </div>
 <div className='form-group col-md-6'>
      <label htmlFor='birthdate'>Birthdate: *</label>
-     <input type='date' className='form-control' id='birthdate' onChange={this.handleChange.bind(this)} name="birthdate" value={this.convertDateTime(this.state.birthdate)} placeholder='Birthdate' />
+    <input type='date' className='form-control' id='birthdate' onChange={this.handleChange.bind(this)} name="birthdate" value={this.convertDateTime(this.state.birthdate)} placeholder='Birthdate' />
+    {displayFieldError(this.state.errors, "birthdate")}
 </div>
 </div>
 <div className="form-row">
 <div className='form-group col-md-6'>
   <label htmlFor='inputTin4'>TIN: *</label>
-  <input type='text' className='form-control' id='inputTin4' onChange={this.handleChange.bind(this)} value={this.state.tin} name="tin" placeholder='TIN' />
+    <input type='text' className='form-control' id='inputTin4' onChange={this.handleChange.bind(this)} value={this.state.tin} name="tin" placeholder='TIN' />
+    {displayFieldError(this.state.errors, "tin")}
 </div>
 <div className='form-group col-md-6'>
   <label htmlFor='inputEmployeeType4'>Employee Type: *</label>
   <select id='inputEmployeeType4' onChange={this.handleChange.bind(this)} value={this.state.typeId}  name="typeId" className='form-control'>
     <option value='1'>Regular</option>
     <option value='2'>Contractual</option>
-  </select>
+    </select>
+    {!this.state.typeId && displayFieldError(this.state.errors, "typeId")}
 </div>
 </div>
 <button type="submit" onClick={this.handleSubmit.bind(this)} disabled={this.state.loadingSave} className="btn btn-primary mr-2">{this.state.loadingSave?"Loading...": "Save"}</button>
 <button type="button" onClick={() => this.props.history.push("/employees/index")} className="btn btn-primary">Back</button>
 </form>
+{displayUnhandledErrors(this.state.errors, this.state)}
 </div>;
 
 
@@ -79,7 +85,7 @@ export class EmployeeEdit extends Component {
   }
 
   async saveEmployee() {
-    this.setState({ loadingSave: true });
+    this.setState({ loadingSave: true, errors : [] });
     const { id, fullName, birthdate, tin, typeId } = this.state;
     const token = await authService.getAccessToken();
     const requestOptions = {
@@ -101,8 +107,8 @@ export class EmployeeEdit extends Component {
         this.props.history.push("/employees/index");
     }
     else{
-        alert("There was an error occured.");
-        this.setState({ loadingSave: false });
+        var result = await response.json();
+        this.setState({ errors: result["errors"], loadingSave: false });
     }
   }
 
