@@ -1,4 +1,4 @@
-﻿import React, { Component } from 'react';
+﻿import React from 'react';
 
 export function displayFieldError(errorMessages, key) {
     if (errorMessages.length > 0) {
