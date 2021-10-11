@@ -55,6 +55,11 @@ namespace Sprout.Exam.WebApp
 
             services.AddControllersWithViews();
 
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
             // validators
             services.AddTransient<IValidator<CreateEmployeeDto>, CreateEmployeeDtoValidator>();
             services.AddTransient<IValidator<EditEmployeeDto>, EditEmployeeDtoValidator>(x => {

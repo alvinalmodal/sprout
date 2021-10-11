@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import authService from '../../components/api-authorization/AuthorizeService';
+import { displayFieldError, displayUnhandledErrors } from '../../common/DisplayError';
 
 export class EmployeeCreate extends Component {
   static displayName = EmployeeCreate.name;
 
   constructor(props) {
     super(props);
-    this.state = { fullName: '',birthdate: '',tin: '',typeId: 1, loading: false,loadingSave:false };
+    this.state = { fullName: '',birthdate: '',tin: '',typeId: 1, loading: false,loadingSave:false, errors : [] };
   }
 
   componentDidMount() {
@@ -21,7 +22,17 @@ export class EmployeeCreate extends Component {
       if (window.confirm("Are you sure you want to save?")) {
         this.saveEmployee();
       } 
-  }
+    }
+
+    displayErrors() {
+        if (this.state.errors.length > 0) {
+            console.log("there is an error", this.state.errors);
+            return this.state.errors.map(error => {
+                return <h1>{error.errorMessage}</h1>;
+            });
+        }
+        console.log("there is an error", this.state.errors);
+    }
 
   render() {
 
@@ -33,16 +44,19 @@ export class EmployeeCreate extends Component {
 <div className='form-group col-md-6'>
   <label htmlFor='inputFullName4'>Full Name: *</label>
   <input type='text' className='form-control' id='inputFullName4' onChange={this.handleChange.bind(this)} name="fullName" value={this.state.fullName} placeholder='Full Name' />
+  {displayFieldError(this.state.errors, "fullname")}
 </div>
 <div className='form-group col-md-6'>
   <label htmlFor='inputBirthdate4'>Birthdate: *</label>
   <input type='date' className='form-control' id='inputBirthdate4' onChange={this.handleChange.bind(this)} name="birthdate" value={this.state.birthdate} placeholder='Birthdate' />
+  {displayFieldError(this.state.errors, "birthdate")}
 </div>
 </div>
 <div className="form-row">
 <div className='form-group col-md-6'>
   <label htmlFor='inputTin4'>TIN: *</label>
   <input type='text' className='form-control' id='inputTin4' onChange={this.handleChange.bind(this)} value={this.state.tin} name="tin" placeholder='TIN' />
+  {displayFieldError(this.state.errors, "tin")}
 </div>
 <div className='form-group col-md-6'>
   <label htmlFor='inputEmployeeType4'>Employee Type: *</label>
@@ -50,11 +64,13 @@ export class EmployeeCreate extends Component {
     <option value='1'>Regular</option>
     <option value='2'>Contractual</option>
   </select>
+  {!this.state.typeId && displayFieldError(this.state.errors, "typeId")}
 </div>
 </div>
 <button type="submit" onClick={this.handleSubmit.bind(this)} disabled={this.state.loadingSave} className="btn btn-primary mr-2">{this.state.loadingSave?"Loading...": "Save"}</button>
 <button type="button" onClick={() => this.props.history.push("/employees/index")} className="btn btn-primary">Back</button>
-</form>
+            </form>
+  {displayUnhandledErrors(this.state.errors, this.state)}
 </div>;
 
     return (
@@ -67,7 +83,7 @@ export class EmployeeCreate extends Component {
   }
 
   async saveEmployee() {
-    this.setState({ loadingSave: true });
+    this.setState({ loadingSave: true, errors : [] }); 
     const token = await authService.getAccessToken();
     const requestOptions = {
         method: 'POST',
@@ -83,9 +99,7 @@ export class EmployeeCreate extends Component {
     }
     else {
         var result = await response.json();
-        console.log(result.errors)
-        console.log(result.errors["birthdate"]);
-        alert("There was an error occured.");
+        this.setState({ errors: result["errors"], loadingSave: false });
     }
   }
 

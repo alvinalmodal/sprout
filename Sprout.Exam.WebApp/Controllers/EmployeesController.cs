@@ -90,6 +90,9 @@ namespace Sprout.Exam.WebApp.Controllers
         {
             try
             {
+                if (employeeInput is null)
+                    employeeInput = new EditEmployeeDto();
+
                 var modelState = UpdateValidator.Validate(employeeInput);
                 if (!modelState.IsValid)
                     return BadRequest(new { Errors = Mapper.Map<List<ErrorResponse>>(modelState.Errors) });
@@ -111,10 +114,13 @@ namespace Sprout.Exam.WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post(CreateEmployeeDto input)
+        public async Task<IActionResult> Post([FromBody]CreateEmployeeDto input)
         {
             try
             {
+                if (input is null)
+                    input = new CreateEmployeeDto();
+
                 var modelState = CreateValidator.Validate(input);
                 if (!modelState.IsValid)
                     return BadRequest(new { Errors = Mapper.Map<List<ErrorResponse>>(modelState.Errors) });
@@ -160,10 +166,13 @@ namespace Sprout.Exam.WebApp.Controllers
         /// <param name="workedDays"></param>
         /// <returns></returns>
         [HttpPost("{id}/calculate")]
-        public async Task<IActionResult> Calculate(CalculateSalaryDto input)
+        public async Task<IActionResult> Calculate([FromBody]CalculateSalaryDto input)
         {
             try
             {
+                if (input == null)
+                    input = new CalculateSalaryDto();
+
                 var modelState = CalculateValidator.Validate(input);
                 if (!modelState.IsValid)
                     return BadRequest(new { Errors = Mapper.Map<List<ErrorResponse>>(modelState.Errors) });
