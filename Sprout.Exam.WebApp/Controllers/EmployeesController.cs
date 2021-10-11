@@ -86,7 +86,7 @@ namespace Sprout.Exam.WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(EditEmployeeDto employeeInput)
+        public async Task<IActionResult> Put([FromBody]EditEmployeeDto employeeInput)
         {
             try
             {

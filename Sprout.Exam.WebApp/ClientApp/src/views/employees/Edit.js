@@ -25,9 +25,10 @@ export class EmployeeEdit extends Component {
 
     convertDateTime(date) {
         if (date instanceof Date) {
-            const year = date.getFullYear()
-            const month = `${date.getMonth() + 1}`.padStart(2, "0")
-            const day = `${date.getDate()}`.padStart(2, "0")
+            var dateString = date
+            const year = date.getUTCFullYear();
+            const month = `${date.getUTCMonth() + 1}`.padStart(2, "0");
+            const day = `${date.getUTCDate()}`.padStart(2, "0");
             return `${year}-${month}-${day}`;
         }
         return date;
@@ -79,11 +80,18 @@ export class EmployeeEdit extends Component {
 
   async saveEmployee() {
     this.setState({ loadingSave: true });
+    const { id, fullName, birthdate, tin, typeId } = this.state;
     const token = await authService.getAccessToken();
     const requestOptions = {
         method: 'PUT',
         headers: !token ? {} : { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },
-        body: JSON.stringify(this.state)
+        body: JSON.stringify({
+            id,
+            fullName,
+            birthdate,
+            tin,
+            typeId
+        })
     };
     const response = await fetch('api/employees/' + this.state.id,requestOptions);
 
@@ -94,6 +102,7 @@ export class EmployeeEdit extends Component {
     }
     else{
         alert("There was an error occured.");
+        this.setState({ loadingSave: false });
     }
   }
 
@@ -103,7 +112,7 @@ export class EmployeeEdit extends Component {
     const response = await fetch('api/employees/' + id, {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
     });
-    const data = await response.json();
-    this.setState({ id: data.id, fullName: data.fullName, birthdate: new Date(data.birthdate), tin: data.tin, typeId: data.typeId, loading: false, loadingSave: false });
+      const data = await response.json();
+      this.setState({ id: data.id, fullName: data.fullName, birthdate: new Date(data.birthdate.replace('T00:00:00','')), tin: data.tin, typeId: data.typeId, loading: false, loadingSave: false });
   }
 }
