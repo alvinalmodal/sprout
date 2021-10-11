@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sprout.Exam.DataAccess", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sprout.Exam.Common", "Sprout.Exam.Common\Sprout.Exam.Common.csproj", "{8DFA8282-B821-463A-914D-E3DE367A1BE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sprout.Exam.Tests", "Sprout.Exam.Tests\Sprout.Exam.Tests.csproj", "{2B773C75-43A4-4F71-AC23-F756D8FCC997}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sprout.Exam.Tests", "Sprout.Exam.Tests\Sprout.Exam.Tests.csproj", "{2B773C75-43A4-4F71-AC23-F756D8FCC997}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database Objects", "Database Objects", "{B61FCEAC-F238-4343-B67C-6FEBB7C21BC1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\SproutDb.bak = ..\..\SproutDb.bak
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

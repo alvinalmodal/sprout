@@ -81,7 +81,10 @@ export class EmployeeCreate extends Component {
         alert("Employee successfully saved");
         this.props.history.push("/employees/index");
     }
-    else{
+    else {
+        var result = await response.json();
+        console.log(result.errors)
+        console.log(result.errors["birthdate"]);
         alert("There was an error occured.");
     }
   }

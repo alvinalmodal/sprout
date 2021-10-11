@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Sprout.Exam.Business.DataTransferObjects;
 using Sprout.Exam.DataAccess.Models;
+using Sprout.Exam.WebApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,8 @@ namespace Sprout.Exam.WebApp
             CreateMap<EmployeeModel, CreateEmployeeDto>()
                     .ForMember(dest => dest.TypeId, opt => opt.MapFrom(src => src.EmployeeTypeId))
                     .ReverseMap();
+            CreateMap<ValidationFailure, ErrorResponse>()
+                .ForMember(dest => dest.Key, opt => opt.MapFrom(src => src.PropertyName));
         }
     }
 }
