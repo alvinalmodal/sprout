@@ -1,6 +1,6 @@
 # sprout assignment project
 How to run the application:
-1. First load SproutDb.bak
+1. Load SproutDb.bak
 2. Create a copy of the database for the test environment before running xunit.
 3. Change directory to "Sprout.Exam.WebApp\ClientApp" then run "npm install".
 
@@ -16,3 +16,5 @@ an architectural design."
 4. The critical/high severity findings error on "npm audit" must be addressed
 5. I will normalize the Employee Table by seperating the full name into three seperate fields (ex. FirstName, MiddleName, LastName)
 6. Create a yaml file for docker in preparation for CI/CD.
+7. Enhance ui by removing popup and replacing it with modal.
+8. Add custom Validation filters to maximize dependency injection and lessen code for validations in controllers.
