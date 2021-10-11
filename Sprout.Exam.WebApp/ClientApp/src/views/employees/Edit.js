@@ -26,7 +26,6 @@ export class EmployeeEdit extends Component {
 
     convertDateTime(date) {
         if (date instanceof Date) {
-            var dateString = date
             const year = date.getUTCFullYear();
             const month = `${date.getUTCMonth() + 1}`.padStart(2, "0");
             const day = `${date.getUTCDate()}`.padStart(2, "0");
